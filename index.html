@@ -373,16 +373,11 @@ figcaption{font-size:12px;color:var(--muted);margin-top:6px;text-align:center;li
 
   <div class="climate-wrap" style="margin-top:18px">
     <div class="chart-box">
-      <h4>📊 鄱阳湖地区：月降水量柱状图 + 气温曲线</h4>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:6px">把鼠标移到柱子上看数值；蓝色为雨季（3–6 月），琥珀色为枯水季（9–12 月）。数据：<a href="https://www.tianqihoubao.com/qihou/nanchang.htm" target="_blank" rel="noopener noreferrer">南昌多年气候平均（天气后报）</a>。</p>
-      <div class="bars" id="precipBars"></div>
-      <svg class="temp-line" id="tempLine" aria-hidden="true" focusable="false" viewBox="0 0 400 190" preserveAspectRatio="none" style="position:static;height:190px;margin-top:-190px;pointer-events:none;display:none"></svg>
-      <div style="height:0;overflow:hidden">气温折线叠加于柱状图（红点）。</div>
-      <div class="chart-legend">
-        <span class="lg-precip">雨季降水（3–6月）</span>
-        <span class="lg-dry">枯水季降水（9–12月）</span>
-        <span class="lg-temp">月平均气温</span>
-      </div>
+      <h4>📊 图 2　鄱阳湖地区气温曲线与降水量柱状图（材料三·原图）</h4>
+      <figure style="margin:8px 0 4px">
+        <img src="assets/img/climate_chart.png" alt="鄱阳湖地区气温曲线与降水量柱状图：3至6月降水集中、夏季高温多雨、冬季温和少雨" style="width:100%;border-radius:10px;background:#fff;padding:6px;box-sizing:border-box">
+      </figure>
+      <p style="font-size:12px;color:var(--muted);margin:0">柱状为月降水量（右轴 mm），曲线为月平均气温（左轴 ℃）：<b style="color:var(--water-deep)">3–6 月降水集中</b>、夏高温多雨，冬季温和少雨——亚热带季风气候。课件材料三原图。</p>
     </div>
     <div>
       <figure class="img-frame">
@@ -988,50 +983,7 @@ window.setSeason=function(s){
   }
 };
 
-/* ===== ② 气候图：南昌月降水 + 气温（单 SVG 重绘） ===== */
-var precip=[69,100,167,221,262,295,132,115,73,56,65,44];
-var temp=[5.5,7.5,11.5,17.5,22.5,26,30,29,25,19.5,13.5,7.5];
-var months=["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"];
-(function climate(){
-  var oldBars=document.getElementById("precipBars");
-  var oldLine=document.getElementById("tempLine");
-  if(!oldBars)return;
-  var W=440,H=230,PL=42,PR=14,PT=26,PB=34;
-  var plotW=W-PL-PR,plotH=H-PT-PB,maxP=320;
-  var svg=el("svg",{viewBox:"0 0 "+W+" "+H,width:"100%","aria-label":"南昌月降水量柱状图与气温曲线"});
-  el("title",null,"南昌多年平均月降水量与月平均气温",svg);
-  el("desc",null,"柱状图为南昌多年月平均降水量（毫米，3至6月雨季最高、9至12月枯水季最低），红色折线为月平均气温（摄氏度，夏季约30度、冬季约6度）。",svg);
-  [0,100,200,300].forEach(function(v){
-    var y=PT+plotH-(v/maxP)*plotH;
-    el("line",{x1:PL,y1:y,x2:W-PR,y2:y,stroke:"#D3E1E8","stroke-width":1},null,svg);
-    el("text",{x:PL-6,y:y+4,"text-anchor":"end","font-size":10,fill:"#7A8C95"},String(v),svg);
-  });
-  el("text",{x:PL-30,y:PT-10,"font-size":10,fill:"#2A7FB8"},"降水 mm",svg);
-  el("text",{x:W-PR,y:PT-10,"text-anchor":"end","font-size":10,fill:"#D9534F"},"气温 ℃",svg);
-  var step=plotW/12,bw=step*0.62,pts=[];
-  precip.forEach(function(p,i){
-    var x=PL+step*i+step/2;
-    var h=(p/maxP)*plotH;
-    var wet=i>=2&&i<=5;
-    var dry=i>=8&&i<=11;
-    var fill=wet?"#2A7FB8":(dry?"#D9932B":"#7FB4D6");
-    var r=el("rect",{x:x-bw/2,y:PT+plotH-h,width:bw,height:h,rx:3,fill:fill},null,svg);
-    el("title",null,months[i]+"：降水 "+p+" mm，平均气温 "+temp[i]+" ℃",r);
-    el("text",{x:x,y:H-14,"text-anchor":"middle","font-size":10,fill:"#415862"},months[i].replace("月",""),svg);
-    var ty=PT+plotH-(temp[i]/35)*plotH;
-    pts.push((i===0?"M":"L")+x.toFixed(1)+","+ty.toFixed(1));
-  });
-  el("polyline",{points:pts.join(" "),fill:"none",stroke:"#D9534F","stroke-width":2.2,"stroke-linejoin":"round","stroke-linecap":"round"},null,svg);
-  precip.forEach(function(p,i){
-    var x=PL+step*i+step/2;
-    var ty=PT+plotH-(temp[i]/35)*plotH;
-    var c=el("circle",{cx:x,cy:ty,r:3.2,fill:"#D9534F"},null,svg);
-    el("title",null,months[i]+" 平均气温 "+temp[i]+" ℃",c);
-  });
-  oldBars.parentNode.insertBefore(svg,oldBars);
-  oldBars.style.display="none";
-  if(oldLine)oldLine.style.display="none";
-})();
+/* ② 气候图已改为课件材料三静态原图（assets/img/climate_chart.png） */
 
 /* ===== ③ 种群折线图 ===== */
 var popData=[
